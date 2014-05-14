@@ -15,8 +15,8 @@ def alpha_scramble(alpha): #This is a small function that scrambles an input alp
 	
 def encrypt_key(alpha): #Foil for reference; takes input scrambled alphabet
 	foil = ["z","y","x","w","v","u","t","s","r","q","p","o","n","m","l","k","j","i","h","g","f","e","d","c","b","a"]
-	encrypt_dict = {"a" : "a",
-    			"b" : "b",
+	encrypt_dict = {		"a" : "a",
+    					"b" : "b",
 					"c" : "c",
 					"d" : "d",
 					"e" : "e",
@@ -40,7 +40,9 @@ def encrypt_key(alpha): #Foil for reference; takes input scrambled alphabet
 					"w" : "w",
 					"x" : "x",
 					"y" : "y",
-					"z" : "z"}
+					"z" : "z"
+			}
+			
 	x = 0
 	for i in alpha:
 		encrypt_dict[i] = foil[x]
