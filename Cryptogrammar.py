@@ -23,7 +23,7 @@ def encrypt_key(alpha): #Foil for reference; takes input scrambled alphabet
 					"f" : "f",
 					"g" : "g",
 					"i" : "i",
-          "h" : "h",
+          				"h" : "h",
 					"j" : "j",
 					"k" : "k",
 					"l" : "l",
