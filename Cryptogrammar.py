@@ -2,73 +2,79 @@ import os
 import wx
 import random
 import re
-from random import shuffle
+from random import shuffle, randrange
 
 #/------------------ Quote Encryption -----------------\
+def shuffle_alphabet():
+	alphabet = ["z","y","x","w","v","u","t","s","r","q","p","o","n",
+	"m","l","k","j","i","h","g","f","e","d","c","b","a"]
 
-#This is the stock alphabet that will be shuffled.
-alphabet = ["z","y","x","w","v","u","t","s","r","q","p","o","n","m","l","k","j","i","h","g","f","e","d","c","b","a"]
+	i = len(alphabet)
+	while i > 1:
+		i = i -1
+		j = randrange(i)
+		alphabet[j], alphabet[i] = alphabet[i], alphabet[j]
+	return alphabet
 
-def alpha_scramble(alpha): #This is a small function that scrambles an input alphabet.
-	shuffle(alpha)
-	return alpha
-	
-def encrypt_key(alpha): #Foil for reference; takes input scrambled alphabet
-	foil = ["z","y","x","w","v","u","t","s","r","q","p","o","n","m","l","k","j","i","h","g","f","e","d","c","b","a"]
+
+# shuffle_alphabet and encrypt_key are separate so that the user can opt to
+# work a new cryptogram at random; they should be able to shuffle a new alphabet
+# at will.
+
+def encrypt_key(alphabet):
 	encrypt_dict = {		"a" : "a",
-    					"b" : "b",
-					"c" : "c",
-					"d" : "d",
-					"e" : "e",
-					"f" : "f",
-					"g" : "g",
-					"i" : "i",
-          				"h" : "h",
-					"j" : "j",
-					"k" : "k",
-					"l" : "l",
-					"m" : "m",
-					"n" : "n",
-					"o" : "o",
-					"p" : "p",
-					"q" : "q",
-					"r" : "r",
-					"s" : "s",
-					"t" : "t",
-					"u" : "u",
-					"v" : "v",
-					"w" : "w",
-					"x" : "x",
-					"y" : "y",
-					"z" : "z"
+											"b" : "b",
+											"c" : "c",
+											"d" : "d",
+											"e" : "e",
+											"f" : "f",
+											"g" : "g",
+											"i" : "i",
+											"h" : "h",
+											"j" : "j",
+											"k" : "k",
+											"l" : "l",
+											"m" : "m",
+											"n" : "n",
+											"o" : "o",
+											"p" : "p",
+											"q" : "q",
+											"r" : "r",
+											"s" : "s",
+											"t" : "t",
+											"u" : "u",
+											"v" : "v",
+											"w" : "w",
+											"x" : "x",
+											"y" : "y",
+											"z" : "z"
 			}
-			
 	x = 0
-	for i in alpha:
-		encrypt_dict[i] = foil[x]
+	for i in encrypt_dict:
+		encrypt_dict[i] = alphabet[x]
 		x += 1
 	return encrypt_dict
 
-def quote_grabber(quote_dict): 
+def quote_fetch(quote_dict): #Grab a random quote from supplied dictionary.
 	k = random.randint(1, len(quotes))
 	quote = quote_dict[k]
 	return quote
 
-def crypt_generator(quote, key):
+def generate_cryptogram(quote, key):
 	string_list = []
 	encryp_list = []
 	null_list = ["*", " ", ",", ".", "?", "'", ";", "!", "", "-",":"] #list of characters not to be encrypted
-	for i in quote:
-		string_list.append(i) #splits the string so that we may mutate it
-	for l in string_list:
-		if l not in null_list:
-			encryp_list.append(key[l.lower()].upper())
+	for character in quote:
+		string_list.append(character) #Splits the string to mutate.
+	for i in string_list:
+		if i not in null_list:
+			encryp_list.append(key[i.lower()].upper())
 		else:
-			encryp_list.append(l)
+			encryp_list.append(i)
 	return "".join(encryp_list)
-			
-	
-	
+
+
+
 quotes = { 1 : "That which I cannot create, I cannot understand. **Richard Feynman**",
 		   2 : "Nobody cares how much you know, until they know how much you care. **Theodore Roosevelt**",
 		   3 : "Courage is what it takes to stand up and speak; courage is also what it takes to sit down and listen. **Winston Churchill**",
@@ -77,11 +83,15 @@ quotes = { 1 : "That which I cannot create, I cannot understand. **Richard Feynm
 		   6: "Fear cannot be without hope, nor hope without fear. **Baruch Spinoza**"
 }
 
-#print crypt_generator(quote_grabber(quotes), encrypt_key(alpha_scramble(alphabet)))
+#print generate_cryptogram(quote_fetch(quotes), encrypt_key(alpha_scramble(alphabet)))
 quote = []
-quote.append(quote_grabber(quotes))
-cryp = []
-base = []
+quote.append(quote_fetch(quotes))
+split_cryptoquote = []
+base_copy = []
+
+#I split the cryptoquote so that the user can decode
+#a letter at a time in the interface.
+
 
 HOW_TO = 1
 
@@ -92,28 +102,28 @@ class MainWindow(wx.Frame):
 		wx.Frame.__init__(self, parent, title="Cryptogrammar", size=(1000, 200))
 		self.CreateStatusBar()
 
-		self.txt = wx.StaticText(self, -1, "".join(cryp), (20,30), (40,40))
+		self.txt = wx.StaticText(self, -1, "".join(split_cryptoquote), (20,30), (40,40))
 		self.txt.SetForegroundColour("WHITE")
 
 		#Menu
 		filemenu = wx.Menu()
-		menuAbout = filemenu.Append(wx.ID_ABOUT, "&About", " Information about this program")
-		menuHow = filemenu.Append(HOW_TO, "&How to Play", " How to play Cryptogrammar")
-		menuExit = filemenu.Append(wx.ID_EXIT,"E&xit", " Close Cryptogrammar")
+		menu_about = filemenu.Append(wx.ID_ABOUT, "&About", " Information about this program")
+		menu_how = filemenu.Append(HOW_TO, "&How to Play", " How to play Cryptogrammar")
+		menu_exit = filemenu.Append(wx.ID_EXIT,"E&xit", " Close Cryptogrammar")
 		#menuGenerate = filemenu.Append(wx.ID_NONE, "&Generate New", "Generate a new cryptogram")
 
-		#Menubar
-		menuBar = wx.MenuBar()
-		menuBar.Append(filemenu, "&File")
-		self.SetMenuBar(menuBar)
+		#menu_bar
+		menu_bar = wx.MenuBar()
+		menu_bar.Append(filemenu, "&File")
+		self.SetMenuBar(menu_bar)
 
 
 		#Buttons
-		GenButton = wx.Button(self, -1, "&Generate Cryptogram")
-		DecButton = wx.Button(self, -1, "&Decode Letter")
-		ClearButton = wx.Button(self, -1, "&Clear Changes")
-		AnswerButton = wx.Button(self, -1, "Show &Answer")
-		but_list = [GenButton, DecButton, ClearButton, AnswerButton]
+		generate_button = wx.Button(self, -1, "&Generate Cryptogram")
+		decode_button = wx.Button(self, -1, "&Decode Letter")
+		clear_button = wx.Button(self, -1, "&Clear Changes")
+		answer_button = wx.Button(self, -1, "Show &Answer")
+		but_list = [generate_button, decode_button, clear_button, answer_button]
 
 		#Sizers
 		self.sizer2 = wx.BoxSizer(wx.HORIZONTAL)
@@ -125,13 +135,13 @@ class MainWindow(wx.Frame):
 		self.sizer.Add(self.sizer2, 0, wx.EXPAND)
 
 		#Events
-		self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
-		self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
-		self.Bind(wx.EVT_MENU, self.OnHow, menuHow)
-		self.Bind(wx.EVT_BUTTON, self.OnGen, GenButton)
-		self.Bind(wx.EVT_BUTTON, self.OnDec, DecButton)
-		self.Bind(wx.EVT_BUTTON, self.OnAnswer, AnswerButton)
-		self.Bind(wx.EVT_BUTTON, self.OnClear, ClearButton)
+		self.Bind(wx.EVT_MENU, self.on_about, menu_about)
+		self.Bind(wx.EVT_MENU, self.on_exit, menu_exit)
+		self.Bind(wx.EVT_MENU, self.on_how, menu_how)
+		self.Bind(wx.EVT_BUTTON, self.on_generate_quote, generate_button)
+		self.Bind(wx.EVT_BUTTON, self.on_decode, decode_button)
+		self.Bind(wx.EVT_BUTTON, self.on_answer, answer_button)
+		self.Bind(wx.EVT_BUTTON, self.on_clear, clear_button)
 
 
 		self.SetSizer(self.sizer)
@@ -140,24 +150,24 @@ class MainWindow(wx.Frame):
 		self.SetTitle("Cryptogrammar")
 		self.Centre()
 
-	def OnAbout(self, e):
-		dlg = wx.MessageDialog(self, "A program for generating random cryptograms.\n\n\n\nCopyright 2014 Joshua Simmons\nVersion 0.1.0", "About Cryptogrammar", wx.OK)
-		dlg.ShowModal()
-		dlg.Destroy()
+	def on_about(self, e):
+		dialogue = wx.MessageDialog(self, "A program for generating random cryptograms.\n\n\n\nCopyright 2014 Joshua Simmons\nVersion 0.1.0", "About Cryptogrammar", wx.OK)
+		dialogue.ShowModal()
+		dialogue.Destroy()
 
-	def OnExit(self, e):
+	def on_exit(self, e):
 		self.Close(True)
 
-	def OnHow(self, e):
-		dlg = wx.MessageDialog(self, "HOW TO PLAY:\n\n\n--\tPress the 'Generate Cryptogram' to spawn a cryptogram.\n\n--\tUse the 'Decode Letter' to replace an encrypted letter with a letter of your choice. 'Decoded' letters will be lowercase to distinguish them.\n\n--\tUse the 'Clear Changes' button to reset the puzzle.\n\n--\t'Show Answer' solves the puzzle!", "How to play Cryptogrammar", wx.OK) 
-		dlg.ShowModal()
-		dlg.Destroy()
+	def on_how(self, e):
+		dialogue = wx.MessageDialog(self, "HOW TO PLAY:\n\n\n--\tPress the 'Generate Cryptogram' to spawn a cryptogram.\n\n--\tUse the 'Decode Letter' to replace an encrypted letter with a letter of your choice. 'Decoded' letters will be lowercase to distinguish them.\n\n--\tUse the 'Clear Changes' button to reset the puzzle.\n\n--\t'Show Answer' solves the puzzle!", "How to play Cryptogrammar", wx.OK)
+		dialogue.ShowModal()
+		dialogue.Destroy()
 
-	def OnDec(self, e):
+	def on_decode(self, e):
 		global cryp
-		dlg = wx.TextEntryDialog(self, "Which letter do you wish to change? Use format: 'a=e'", "Decode Letter", "")
-		dlg.ShowModal()
-		decode = dlg.GetValue()
+		dialogue = wx.TextEntryDialog(self, "Which letter do you wish to change? Use format: 'a=e'", "Decode Letter", "")
+		dialogue.ShowModal()
+		decode = dialogue.GetValue()
 		#Text entry filter
 		match = re.search(r'\w+=\w+|^\d*$', decode)
 		if not match:
@@ -167,34 +177,34 @@ class MainWindow(wx.Frame):
 		else:
 			origin = decode[0].upper()
 			replace = decode[2].upper()
-			for n in range(0, len(cryp)):
-				if cryp[n] == origin:
-					cryp[n] = replace.lower()
-			self.txt.SetLabel("".join(cryp))
+			for n in range(0, len(split_cryptoquote)):
+				if split_cryptoquote[n] == origin:
+					split_cryptoquote[n] = replace.lower()
+			self.txt.SetLabel("".join(split_cryptoquote))
 			self.sizer.Layout()
 
-		dlg.Destroy()
+		dialogue.Destroy()
 
-	def OnGen(self, e):
-		global crpqut
-		global cryp
-		global base
+	def on_generate_quote(self, e):
+		global cryptoquote
+		global split_cryptoquote
+		global base_copy
 
 		quote.pop()
-		quote.append(quote_grabber(quotes))
-		crpqut = crypt_generator(quote[0], encrypt_key(alpha_scramble(alphabet)))
-		cryp = []
-		base = []
-		for i in crpqut:
-			cryp.append(i)
-			base.append(i)
-		self.txt.SetLabel("".join(cryp))
-		self.txt.SetForegroundColour("WHITE")
+		quote.append(quote_fetch(quotes))
+		cryptoquote = generate_cryptogram(quote[0], encrypt_key(shuffle_alphabet()))
+		split_cryptoquote= []
+		base_copy = []
+		for i in cryptoquote:
+			split_cryptoquote.append(i)
+			base_copy.append(i)
+		self.txt.SetLabel("".join(split_cryptoquote))
+		self.txt.SetForegroundColour("BLACK")
 		self.sizer.Layout()
 
-	def OnAnswer(self, e):
-		global base
-		if len(base) == 0:
+	def on_answer(self, e):
+		global base_copy
+		if len(base_copy) == 0:
 			err = wx.MessageDialog(self, "You haven't generated a puzzle yet, doofus!", "Encryption Error", style=wx.ICON_HAND)
 			err.ShowModal()
 		else:
@@ -202,10 +212,10 @@ class MainWindow(wx.Frame):
 			self.txt.SetForegroundColour("BLUE")
 			self.sizer.Layout()
 
-	def OnClear(self, e):
-		global base
-		self.txt.SetLabel("".join(base))
-		self.txt.SetForegroundColour("WHITE")
+	def on_clear(self, e):
+		global base_copy
+		self.txt.SetLabel("".join(base_copy))
+		self.txt.SetForegroundColour("BLACK")
 		self.sizer.Layout()
 
 app = wx.App(False)
