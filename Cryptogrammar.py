@@ -23,31 +23,31 @@ def shuffle_alphabet():
 
 def encrypt_key(alphabet):
 	encrypt_dict = {		"a" : "a",
-											"b" : "b",
-											"c" : "c",
-											"d" : "d",
-											"e" : "e",
-											"f" : "f",
-											"g" : "g",
-											"i" : "i",
-											"h" : "h",
-											"j" : "j",
-											"k" : "k",
-											"l" : "l",
-											"m" : "m",
-											"n" : "n",
-											"o" : "o",
-											"p" : "p",
-											"q" : "q",
-											"r" : "r",
-											"s" : "s",
-											"t" : "t",
-											"u" : "u",
-											"v" : "v",
-											"w" : "w",
-											"x" : "x",
-											"y" : "y",
-											"z" : "z"
+					"b" : "b",
+					"c" : "c",
+					"d" : "d",
+					"e" : "e",
+					"f" : "f",
+					"g" : "g",
+					"i" : "i",
+					"h" : "h",
+					"j" : "j",
+					"k" : "k",
+					"l" : "l",
+					"m" : "m",
+					"n" : "n",
+					"o" : "o",
+					"p" : "p",
+					"q" : "q",
+					"r" : "r",
+					"s" : "s",
+					"t" : "t",
+					"u" : "u",
+					"v" : "v",
+					"w" : "w",
+					"x" : "x",
+					"y" : "y",
+					"z" : "z"
 			}
 	x = 0
 	for i in encrypt_dict:
@@ -97,8 +97,7 @@ class MainWindow(wx.Frame):
 	split_buffer = []
 	buffer_origin = None
 	buffer_replace = None
-	quote_altered = False #Becomes true after first decoding change.
-
+	
 	def __init__(self, parent, title):
 		wx.Frame.__init__(self, parent, title="Cryptogrammar", size=(1000, 200))
 		self.CreateStatusBar()
@@ -111,7 +110,6 @@ class MainWindow(wx.Frame):
 		menu_about = filemenu.Append(wx.ID_ABOUT, "&About", " Information about this program")
 		menu_how = filemenu.Append(HOW_TO, "&How to Play", " How to play Cryptogrammar")
 		menu_exit = filemenu.Append(wx.ID_EXIT,"E&xit", " Close Cryptogrammar")
-		#menuGenerate = filemenu.Append(wx.ID_NONE, "&Generate New", "Generate a new cryptogram")
 
 		#menu_bar
 		menu_bar = wx.MenuBar()
